@@ -158,6 +158,8 @@ Buscando en internet vemos que esos puertos los  usa el xvnc ( y aparte ese proc
 
 Si buscas "Kali Xvnc" nos sale como instalar este paquete que no es mas que un VNC.
 
+
+
 ### Dynamic portfowarding
 
 Vamos a exponer los puertos que se necesitan para la conexion de la vnc.
@@ -181,6 +183,9 @@ lsof -i:1080
 #No hay nada pero ya despues si.
 
 ```
+![image](https://github.com/gecr07/Poison-HTB/assets/63270579/8c7129d5-0ec1-4db7-b50c-93a85e042357)
+
+> https://www.kali.org/tools/tightvnc/
 
 ![image](https://github.com/gecr07/Poison-HTB/assets/63270579/d95ebf72-9831-4ae4-9081-77bf0259e02d)
 
